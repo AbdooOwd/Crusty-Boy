@@ -68,4 +68,20 @@ impl GPU {
             self.tileset[tile_index][row_index][pixel_index] = pixel_value;
         }
     }
+
+    /*
+    CE ED 66 66 CC 0D 00 0B 03 73 00 83 00 0C 00 0D
+    00 08 11 1F 88 89 00 0E DC CC 6E E6 DD DD D9 99
+    BB BB 67 63 6E 0E EC CC DD DC 99 9F BB B9 33 3E
+    */
+
+    pub fn get_nintendo_logo_data(data: &Vec<u8>) -> Vec<u8> {
+        let mut logo: Vec<u8> = vec![0; 48];
+
+        for address in 0x104..=0x133 {
+            logo[address - 0x104] = data[address];
+        }
+
+        logo
+    }
 }
