@@ -39,8 +39,8 @@ impl CPU {
 
         if DEBUG_ENABLED {
             let log: String = format!(
-                "[0x{:04X}] {} '{:?}' | 0x{instruction_byte:02X}", 
-                self.pc, if prefixed { "(0xCB)" } else { " " },
+                "[0x{:04X}]{}{:?}:0x{instruction_byte:02X}", 
+                self.pc, if prefixed { " (0xCB) " } else { " " },
                 if let Some(instruction) = Instruction::from_byte(instruction_byte, prefixed) {instruction} else {Instruction::IDK}
             );
             println!("{}", log);
@@ -57,8 +57,8 @@ impl CPU {
 
         if DEBUG_ENABLED {
             let log: String = format!(
-                "A: 0b{:08b} | B: 0b{:08b} | C: 0b{:08b} | D: 0b{:08b} | E: 0b{:08b} | F: 0b{:08b} | H: 0b{:08b} | L: 0b{:08b}\n\
-                SP: 0b{:08b} | BC: 0b{:016b} | DE: 0b{:016b} | HL: 0b{:016b} | AF: 0b{:016b}\n",
+                "A:{:08b}|B:{:08b}|C:{:08b}|D:{:08b}|E:{:08b}|F:{:08b}|H:{:08b}|L:{:08b}\n\
+                SP:{:08b}|BC:{:016b}|DE:{:016b}|HL:{:016b}|AF:{:016b}\n",
                 self.regs.a, self.regs.b, self.regs.c, self.regs.d, self.regs.e, self.regs.flags.into_u8(), self.regs.h, self.regs.l,
                 self.regs.sp, self.regs.get_vreg_value(Reg16::BC).0, self.regs.get_vreg_value(Reg16::DE).0, 
                 self.regs.get_vreg_value(Reg16::HL).0, self.regs.get_vreg_value(Reg16::AF).0
@@ -402,8 +402,7 @@ impl CPU {
             },
 
             Instruction::SWAP(target) => {
-                // lower upper
-                // upper lower
+                // swap nibbles
                 let reg = self.regs.get_reg(target).0;
                 let upper = *reg & 0b11110000;
                 let lower = *reg & 0b00001111;
@@ -562,7 +561,11 @@ impl CPU {
         if should_jump {
             let relative = self.read_next_byte() as i8;
 
-            self.pc.wrapping_add(relative as i16 as u16)
+            let new_pc = self.pc.wrapping_add(relative as i16 as u16);
+
+            log(&format!("Jump to: 0x{new_pc:04X}"));
+
+            new_pc
         } else {
             self.pc.wrapping_add(2)
         }

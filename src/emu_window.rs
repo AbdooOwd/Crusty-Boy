@@ -16,8 +16,8 @@ pub fn window_life(mut cpu: CPU) {
     let mut framebuffer = vec![0u32; SCREEN_WIDTH * SCREEN_HEIGHT]; // 1 pixel = 4 bytes (RGBA)
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        // draw_vram_to_framebuffer(&cpu.mem_bus.gpu, &mut framebuffer);
-        cpu.step();
+        draw_vram_to_framebuffer(&cpu.mem_bus.gpu, &mut framebuffer);
+        // cpu.step();
 
         // Update the window with the pixel buffer
         window.update_with_buffer(&framebuffer, SCREEN_WIDTH, SCREEN_HEIGHT).unwrap();

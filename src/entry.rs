@@ -1,4 +1,4 @@
-use crate::{cpu::CPU, emu_window, rom::ROM, utils::{log, reset_logs}};
+use crate::{cpu::CPU, emu_window, rom::ROM, utils::{log, reset_logs}, playground::play};
 
 const TETRIS_ROM_PATH: &str = "tests/tetris.gb";
 const BAKERY_ROM_PATH: &str = "tests/bakery_v1.0.3.gb";
@@ -9,7 +9,7 @@ pub fn setup() -> () {
     reset_logs();
 
     let mut cpu = CPU::new();
-    let rom: ROM = ROM::read_rom(TEST_ROM_PATH);
+    let rom: ROM = ROM::read_rom(TETRIS_ROM_PATH);
 
     cpu.pc = 0x100; // TODO: don't always skip the bootrom!
 
@@ -20,8 +20,8 @@ pub fn setup() -> () {
         ROM Type: \"{}\"\n\
         ROM Region: \"{}\"\n\
         ROM Version: \"{}\"\n\
-        Calculated Header Checksum: {:04X}\n\
-        Original Header Checksum: {:04X}\n\
+        Calculated Header Checksum: 0x{:04X}\n\
+        Original Header Checksum: 0x{:04X}\n\
         \n\
         CPU PC: 0x{:04X} | {}\n\
         ",
@@ -40,7 +40,9 @@ pub fn setup() -> () {
     cpu.mem_bus.memory = rom.data.clone().try_into().expect("Couldn't convert ROM bytes vector to an array");
     cpu.rom_size = rom.size;
 
-    emu_window::window_life(cpu);
+    play();
+
+    //emu_window::window_life(cpu);
 }
 
 #[allow(unused)]

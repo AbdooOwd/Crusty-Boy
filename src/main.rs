@@ -9,6 +9,8 @@ mod gpu;
 mod emu_window;
 mod rom;
 
+mod playground;
+
 fn main() -> () {
     println!("Crusty-Boy greets you!");
     entry::setup();

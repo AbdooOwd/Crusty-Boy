@@ -26,6 +26,7 @@ pub struct Registers {
     pub l: u8,
 
     pub sp: u16,
+    pub lcdc: LCDControl,
 }
 
 pub struct FlagsRegister {
@@ -33,6 +34,24 @@ pub struct FlagsRegister {
     pub subtract: bool,     // bit 6
     pub half_carry: bool,   // bit 5
     pub carry: bool,        // bit 4
+}
+
+pub struct LCDControl {
+    // intial val: 0x91 / 10010001
+
+    pub lcd_ppu_enabled: bool,          // bit 7
+
+    pub window_tilemap_area: bool,      // bit 6 - if clear, bit0 overrides it   
+    pub window_enabled: bool,           // bit 5
+
+    pub bg_window_tilemap_area: bool,   // bit 4
+    pub bg_tilemap_area: bool,          // bit 3
+
+    pub obj_size: bool,                 // bit 2
+    pub obj_enabled: bool,              // bit 1
+
+    // in DMG, "window_bg_enabeld" is more correct of a name
+    pub bg_window_enabled_priority: bool,   // bit 0
 }
 
 
@@ -80,7 +99,9 @@ impl Registers {
             flags: FlagsRegister::new(),
             h: 0,
             l: 0,
-            sp: 0xFFFE
+
+            sp: 0xFFFE,
+            lcdc: LCDControl::new(),
         }
     }
 
@@ -284,6 +305,21 @@ impl FlagsRegister {
             subtract, 
             half_carry, 
             carry
+        }
+    }
+}
+
+impl LCDControl {
+    pub fn new() -> Self {
+        LCDControl {
+            lcd_ppu_enabled: true,
+            window_tilemap_area: false,
+            window_enabled: false,
+            bg_window_tilemap_area: true, 
+            bg_tilemap_area: false,
+            obj_size: false,
+            obj_enabled: false,
+            bg_window_enabled_priority: true,
         }
     }
 }
